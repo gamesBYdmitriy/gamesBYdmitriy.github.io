@@ -78,7 +78,7 @@ var snake ={
         {x: 4, y: 4}
 
     ],
-    facing:"W",
+    facing:"Ew",
     move: function(){
         let location
         if(snake.facing == "E"){
