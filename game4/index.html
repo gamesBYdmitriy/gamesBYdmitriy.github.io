@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./game4.css">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="tutoryal" width="1000" height="800">
+    </canvas>
+    <!-- <script src="../Game4/game4.js"></script> -->
+    <script>
+        var canvas = document.getElementById("tutoryal");
+var ctx = canvas.getContext("2d");
+var timer
+function Paddel( x, y, width, height){
+    this.speedModifer = 0
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.hasCollision = function(ball){
+        var leftWall = this.x - ball.radius;
+        var rightWall = this.x + this.width + ball.radius;
+        var topWall = this.y;
+        var bottomWall = this.y + this.height;
+        if(ball.x > leftWall && ball.x < rightWall && ball.y > topWall && ball.y < bottomWall){
+            return true;
+        }
+        return false;
+    };
+    this.move = function(keyCode){  
+        var dy = this.y;
+        if(keyCode == 87){
+            dy += -3;
+            this.speedModifer = 1.5;
+        }
+        else if(keyCode == 83){
+            dy += 3;
+            this.speedModifer = 1.5;
+        }
+        else(this.speedModifer = 0);
+        if(dy <= 0){
+            dy = 0;
+        }
+        if(dy >= 670){
+            dy = 670;
+        }
+        this.y = dy;
+    }
+}
+var player = new Paddel(5, 345, 30, 130);
+var ii = new Paddel(965, 345, 30, 130);
+function drawPaddel(paddel){
+    ctx.fillStyle ="red"
+    ctx.fillRect(paddel.x, paddel.y, paddel.width, paddel.height);
+}
+var ball = {
+    x: 520,
+    y: 410,
+    radius: 15,
+    speedx: 2,
+    speedy: 0,
+    reverseX: function(){
+        this.speedx = this.speedx*(-1);
+    },
+    reverseY: function(){
+        this.speedy = this.speedy*(-1);
+    },
+    reset: function () {
+        this.x = 520;
+        this.y = 410;
+        this.speedx = 2;
+        this.speedy = 0;
+    },
+        modifyXSpeedBy: function(modification){
+        modification = this.speedx < 0 ? modification * -1 : modification;
+        var nextValue = this.speedx + modification;
+        nextValue = Math.abs(nextValue) > 9 ? 9 : nextValue;
+        this.speedx = nextValue;
+    },
+    modifyYSpeedBy: function(modification){
+        modification = this.speedy < 0 ? modification * -1 :modification;
+        this.speedy = modification;
+    }
+}
+function drawBall(ball){
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI, false);
+    ctx.fillStyle="white";
+    ctx.fill();
+}
+function updateGame(){
+    ball.x += ball.speedx;
+    ball.y += ball.speedy;
+    if(ball.x >= 1000 || ball.x <= 0){
+        ball.reset();
+    }
+    if(ball.y >= 800 || ball.y <= 0){
+        ball.reverseY();
+    }
+    if(player.hasCollision(ball) || ii.hasCollision(ball)){
+        ball.reverseX();
+        ball.modifyXSpeedBy(0.25);
+        var speedUpValue = player.hasCollision(ball) ? player.speedModifer : ii.speedModifer;
+        ball.modifyYSpeedBy(speedUpValue);
+    }
+    for(var keyCode in heldDown){
+        player.move(keyCode);
+    }
+    var iiMiddle = ii.y + (ii.height / 2);
+    if(iiMiddle < ball.y){
+    ii.move(83);
+}
+    if(iiMiddle > ball.y){
+    ii.move(87);
+}
+}
+function tick(){
+    updateGame();
+    draw();
+    window.setTimeout("tick()", 1000/60); 
+}
+function draw(){
+    ctx.fillStyle="green";
+    ctx.fillRect(0, 0, 1000, 800);
+    drawPaddel(player);
+    drawPaddel(ii);
+    drawBall(ball);
+}
+var heldDown = {};
+window.addEventListener("keydown", function(keyInfo) { 
+                                heldDown[event.keyCode] = true;                      
+                              }, false);
+window.addEventListener("keyup", function(keyInfo) { 
+                                delete heldDown[event.keyCode]; 
+                              }, false);
+tick();
+
+    </script>
+</body>
+</html>
