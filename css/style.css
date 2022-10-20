@@ -40,7 +40,18 @@ body{
 .b3 {
     width: 200px;
     height: 50px;
-    background:greenyellow;
+    background:green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Oswald', sans-serif;
+    font-size:28px;
+    color:darkblue;
+}
+.b4 {
+    width: 200px;
+    height: 50px;
+    background:yellow;
     display: flex;
     justify-content: center;
     align-items: center;
